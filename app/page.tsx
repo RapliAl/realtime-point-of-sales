@@ -3,7 +3,7 @@
 import Image from "next/image";
 import * as React from "react";
 import {Calendar} from "@/components/ui/calendar";
-import {ModeToggle} from "@/components/mode-toggle";
+import {DarkmodeToggle} from "@/components/common/darkmode-toggle";
 
 export default function Home() {
   const [date, setDate] = React.useState<Date | undefined>(new Date())
@@ -14,10 +14,10 @@ export default function Home() {
         mode="single"
         selected={date}
         onSelect={setDate}
-        className="rounded-md border shadow-sm"
+        className="rounded-md border shadow-sm bg-amber-50 dark:bg-amber-600"
         captionLayout="dropdown"
       />
-        <ModeToggle />
+        <DarkmodeToggle />
     </div>
   );
 }
