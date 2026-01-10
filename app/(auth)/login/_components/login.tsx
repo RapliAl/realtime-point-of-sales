@@ -24,6 +24,7 @@ import {LoginForm, loginSchema} from "@/validations/auth-validation";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {INITIAL_LOGIN_FORM} from "@/constants/auth-constants";
 import {Button} from "@/components/ui/button";
+import FormInput from "@/components/common/form-input";
 
 export default function Login() {
     const form = useForm<LoginForm>({
@@ -31,7 +32,9 @@ export default function Login() {
         defaultValues: INITIAL_LOGIN_FORM
     })
 
-    const onSubmit = form.handleSubmit(async (data) => {})
+    const onSubmit = form.handleSubmit(async (data) => {
+        console.log(data);
+    })
 
     return (
         <Card>
@@ -42,49 +45,19 @@ export default function Login() {
             <CardContent>
                 <Form {...form}>
                     <form onSubmit={onSubmit} className="space-y-4">
-                        <FormField
-                            control={form.control}
+                        <FormInput
+                            form={form}
+                            type="email"
                             name="email"
-                            render={({field: {...rest} }) => (
-                            <FormItem>
-                                <FormLabel>Email</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        {...rest}
-                                        type="email"
-                                        placeholder="Email"
-                                        autoComplete="off"
-                                        required
-                                    />
-                                </FormControl>
-                                <FormDescription>
-                                    Place Your Email Here!
-                                </FormDescription>
-                                <FormMessage className="text-xs"/>
-                            </FormItem>
-                        )}
+                            label="Email"
+                            placeholder="Insert Your Email Here"
                         />
-                        <FormField
-                            control={form.control}
+                        <FormInput
+                            form={form}
+                            type="password"
                             name="password"
-                            render={({field: {...rest} }) => (
-                                <FormItem>
-                                    <FormLabel>Password</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...rest}
-                                            type="password"
-                                            placeholder="Your Password"
-                                            autoComplete="off"
-                                            required
-                                        />
-                                    </FormControl>
-                                    <FormDescription>
-                                        Place Your Password Here!
-                                    </FormDescription>
-                                    <FormMessage className="text-xs"/>
-                                </FormItem>
-                            )}
+                            label="Password"
+                            placeholder="Insert Your Password Here"
                         />
                         <Button type="submit" className="items-center"> Login </Button>
                     </form>
