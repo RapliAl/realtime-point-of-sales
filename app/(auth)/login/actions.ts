@@ -24,7 +24,10 @@ export async function login(
     if (!validatedFields.success) {
         return {
             status: 'error',
-            errors: validatedFields.error.flatten().fieldErrors
+            errors: {
+                ...validatedFields.error.flatten().fieldErrors,
+                _form: [],
+            }
         };
     }
 
@@ -42,7 +45,7 @@ export async function login(
         };
     }
 
-    const {data: profileData} = await supabase
+    const {data: profile} = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user?.id)

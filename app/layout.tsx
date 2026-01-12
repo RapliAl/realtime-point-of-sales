@@ -1,6 +1,7 @@
 import "./globals.css";
 import {ThemeProvider} from "@/provider/theme-provider";
 import React from "react";
+import {Toaster} from "@/components/ui/sonner";
 
 type RootLayoutProps = {
   children: React.ReactNode;
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         >
           {children}
         </ThemeProvider>
+        <Toaster />
         </body>
         </html>
       </>

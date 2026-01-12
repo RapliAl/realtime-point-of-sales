@@ -9,16 +9,18 @@ import {
 } from "@/components/ui/card";
 
 import {Form} from "@/components/ui/form"
-
 import {useForm} from "react-hook-form";
 import {LoginForm, loginSchemaForm} from "@/validations/auth-validation";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {INITIAL_LOGIN_FORM, INITIAL_STATE_LOGIN_FORM} from "@/constants/auth-constants";
-import {Button} from "@/components/ui/button";
 import FormInput from "@/components/common/form-input";
+
+import {zodResolver} from "@hookform/resolvers/zod";
+import {Button} from "@/components/ui/button";
 import {startTransition, useActionState, useEffect} from "react";
 import {login} from "@/app/(auth)/login/actions";
+
 import {Loader2} from "lucide-react";
+import {toast} from "sonner";
+import {INITIAL_LOGIN_FORM, INITIAL_STATE_LOGIN_FORM} from "@/constants/auth-constants";
 
 export default function Login() {
     const form = useForm<LoginForm>({
@@ -43,11 +45,14 @@ export default function Login() {
 
     useEffect(() => {
         if (loginState?.status === 'error') {
+            toast.error('Login Failed', {
+                description: loginState.errors?._form?.[0]
+            });
             startTransition(() => {
                 loginAction(null)
-            })
+            });
         }
-    }, [loginState])
+    }, [loginAction, loginState])
 
     console.log(loginState)
 
