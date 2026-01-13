@@ -1,23 +1,18 @@
 "use client"
 
-import Image from "next/image";
 import * as React from "react";
-import {Calendar} from "@/components/ui/calendar";
-import {DarkmodeToggle} from "@/components/common/darkmode-toggle";
+import {Button} from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Home() {
-  const [date, setDate] = React.useState<Date | undefined>(new Date())
-
   return (
-    <div>
-      <Calendar
-        mode="single"
-        selected={date}
-        onSelect={setDate}
-        className="rounded-md border shadow-sm bg-amber-50 dark:bg-amber-600"
-        captionLayout="dropdown"
-      />
-        <DarkmodeToggle />
+    <div className="bg-muted flex justify-center items-center h-screen flex-col space-y-4">
+        <h1 className="text-4xl font-semibold">Welcome to HomePage!</h1>
+        <Link href="/admin">
+            <Button className="bg-white text-black hover:bg-teal-500 hover:text-white">
+                Access Dashboard!
+            </Button>
+        </Link>
     </div>
   );
 }
