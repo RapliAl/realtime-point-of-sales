@@ -21,6 +21,7 @@ import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {SIDEBAR_MENU_LIST, SidebarMenuKey} from "@/constants/sidebar-constants";
 import {usePathname} from "next/navigation";
 import {cn} from "@/lib/utils";
+import {signOut} from "@/actions/auth-action";
 
 export default function AppSidebar() {
     const {isMobile} = useSidebar()
@@ -106,7 +107,7 @@ export default function AppSidebar() {
                                 </DropdownMenuLabel>
                                 <DropdownMenuSeparator/>
                                 <DropdownMenuGroup>
-                                    <DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => signOut()}>
                                         <LogOut />
                                         Logout
                                     </DropdownMenuItem>
