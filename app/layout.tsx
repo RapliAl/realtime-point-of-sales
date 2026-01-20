@@ -4,12 +4,13 @@ import React from "react";
 import {Toaster} from "@/components/ui/sonner";
 import AuthStoreProvider from "@/provider/auth-store-provider";
 import {cookies} from "next/headers";
+import ReactQueryProvider from "@/provider/react-query-provider";
 
 type RootLayoutProps = {
-  children: React.ReactNode;
+    children: React.ReactNode;
 }
 
-export default async function RootLayout({ children }: RootLayoutProps) {
+export default async function RootLayout({children}: RootLayoutProps) {
     const cookiesStore = await cookies()
     const profile = JSON.parse(cookiesStore.get("user_profile")?.value ?? "{}");
     return (
@@ -21,17 +22,19 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                 </title>
             </head>
             <body>
-            <AuthStoreProvider profile={profile}>
-                <ThemeProvider
-                    attribute="class"
-                    defaultTheme="system"
-                    enableSystem
-                    disableTransitionOnChange
-                >
-                    {children}
-                </ThemeProvider>
-                <Toaster />
-            </AuthStoreProvider>
+            <ReactQueryProvider>
+                <AuthStoreProvider profile={profile}>
+                    <ThemeProvider
+                        attribute="class"
+                        defaultTheme="system"
+                        enableSystem
+                        disableTransitionOnChange
+                    >
+                        {children}
+                    </ThemeProvider>
+                    <Toaster/>
+                </AuthStoreProvider>
+            </ReactQueryProvider>
             </body>
             </html>
         </>

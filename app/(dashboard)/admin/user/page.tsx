@@ -1,7 +1,10 @@
+import UserManagement from "@/app/(dashboard)/admin/user/_components/user";
+
+export const metadata = {
+    title: "Kedai Kita | User Management",
+    description: "User Management Page"
+}
+
 export default function UserManagementPage() {
-    return (
-        <div>
-            <h1> USER MANAGEMENT </h1>
-        </div>
-    )
+    return <UserManagement/>;
 }
