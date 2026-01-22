@@ -8,31 +8,33 @@ import {createClient} from "@/lib/supabase/client";
 import {toast} from "sonner";
 import DataTable from "@/components/common/data-table";
 import {HEADER_TABLE_USER} from "@/constants/user-constant";
-import {useMemo} from "react";
+import {use, useMemo} from "react";
 import DropdownAction from "@/components/common/dropwdown-action";
 import {Pencil, Trash2} from "lucide-react";
+import useDataTable from "@/hooks/use-data-table";
 
 export default function UserManagement() {
     const supabase = createClient();
+    const {currentPage, currentLimit, handleChangePage, handleChangeLimit} = useDataTable()
     const {data: users, isLoading} = useQuery({
-        queryKey: ["users"],
+        queryKey: ["users", currentPage, currentLimit],
         queryFn: async () => {
-            const {data, error} = await supabase
+            const result = await supabase
                 .from("profiles")
                 .select('*', {count: "exact"})
+                .range((currentPage - 1) * currentLimit, currentPage * currentLimit - 1)
                 .order("created_at");
 
-            if (error) toast.error('Get User Data Failed', {
-                description: error.message
+            if (result.error) toast.error('Get User Data Failed', {
+                description: result.error.message
             });
 
-            return data;
+            return result;
         }
     });
 
     const filteredData = useMemo(() => {
-        return (users || []).map((
-            (user, index) => {
+        return (users?.data || []).map(((user, index) => {
                 return [
                     index + 1,
                     user.id,
@@ -68,6 +70,10 @@ export default function UserManagement() {
         ))
     }, [users])
 
+    const totalPages = useMemo(() => {
+        return users && users.count !== null ? Math.ceil(users.count / currentLimit) : 0
+    }, [users])
+
     return (
         <div className="w-full">
             <div className="flex flex-col lg:flex-row mb-4 gap-2 justify-between w-full">
@@ -83,8 +89,16 @@ export default function UserManagement() {
                     </Dialog>
                 </div>
             </div>
-            <DataTable header={HEADER_TABLE_USER} data={filteredData} isLoading={isLoading}/>
-            {isLoading && <div> Loading... </div>}
+            <DataTable
+                header={HEADER_TABLE_USER}
+                data={filteredData}
+                isLoading={isLoading}
+                totalPages={totalPages}
+                currentPage={currentPage}
+                currentLimit={currentLimit}
+                onChangePage={handleChangePage}
+                onChangeLimit={handleChangeLimit}
+            />
         </div>
     )
 }
