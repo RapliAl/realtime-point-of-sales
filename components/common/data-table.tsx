@@ -2,6 +2,17 @@ import {Card} from "@/components/ui/card";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {ReactNode} from "react";
 import PaginationDataTable from "@/components/common/pagination-data-table";
+import {Label} from "@/components/ui/label";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue
+} from "@/components/ui/select";
+import {LIMIT_LIST} from "@/constants/data-table-constants";
 
 export default function DataTable(
     {
@@ -64,7 +75,24 @@ export default function DataTable(
                 </Table>
             </Card>
             <div className="flex flex-items justify-between">
-                <div></div>
+                <div className="flex flex-items-center gap-2">
+                    <Label>Limit</Label>
+                    <Select value={currentLimit.toString()} onValueChange={(value) => onChangeLimit(Number(value))}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select Limit"/>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>Limit</SelectLabel>
+                                {LIMIT_LIST.map((limit) => (
+                                    <SelectItem key={limit} value={limit.toString()}>
+                                        {limit}
+                                    </SelectItem>
+                                ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
                 {
                     totalPages > 1 && (
                         <div className="flex justify-end">
