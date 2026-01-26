@@ -8,22 +8,30 @@ import {createClient} from "@/lib/supabase/client";
 import {toast} from "sonner";
 import DataTable from "@/components/common/data-table";
 import {HEADER_TABLE_USER} from "@/constants/user-constant";
-import {use, useMemo} from "react";
+import {useMemo} from "react";
 import DropdownAction from "@/components/common/dropwdown-action";
 import {Pencil, Trash2} from "lucide-react";
 import useDataTable from "@/hooks/use-data-table";
 
 export default function UserManagement() {
     const supabase = createClient();
-    const {currentPage, currentLimit, handleChangePage, handleChangeLimit} = useDataTable()
+    const {
+        currentPage,
+        currentLimit,
+        currentSearch,
+        handleChangePage,
+        handleChangeLimit,
+        handleChangeSearch
+    } = useDataTable()
     const {data: users, isLoading} = useQuery({
-        queryKey: ["users", currentPage, currentLimit],
+        queryKey: ["users", currentPage, currentLimit, currentSearch],
         queryFn: async () => {
             const result = await supabase
                 .from("profiles")
                 .select('*', {count: "exact"})
                 .range((currentPage - 1) * currentLimit, currentPage * currentLimit - 1)
-                .order("created_at");
+                .order("created_at")
+                .ilike("name", `%${currentSearch}%`);
 
             if (result.error) toast.error('Get User Data Failed', {
                 description: result.error.message
@@ -79,7 +87,10 @@ export default function UserManagement() {
             <div className="flex flex-col lg:flex-row mb-4 gap-2 justify-between w-full">
                 <h1 className="text-2xl font-bold"> USER MANAGEMENT </h1>
                 <div className="flex gap-2">
-                    <Input placeholder="Search By Name"/>
+                    <Input
+                        placeholder="Search By Name"
+                        onChange={(e) => handleChangeSearch(e.target.value)}
+                    />
                     <Dialog>
                         <DialogTrigger asChild>
                             <Button variant="outline">
