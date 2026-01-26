@@ -17,7 +17,6 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {Button} from "@/components/ui/button";
 import {startTransition, useActionState, useEffect} from "react";
 import {login} from "@/app/(auth)/login/actions";
-
 import {Loader2} from "lucide-react";
 import {toast} from "sonner";
 import {INITIAL_LOGIN_FORM, INITIAL_STATE_LOGIN_FORM} from "@/constants/auth-constants";
@@ -79,7 +78,8 @@ export default function Login() {
                             label="Password"
                             placeholder="Insert Your Password Here"
                         />
-                        <Button type="submit" className="text-center hover:bg-blue-400 col-span-2"> {isPendingLogin? <Loader2 className="animate-spin"/> : "Login"} </Button>
+                        <Button type="submit" className="text-center hover:bg-blue-400 col-span-2"> {isPendingLogin ?
+                            <Loader2 className="animate-spin"/> : "Login"} </Button>
                     </form>
                 </Form>
             </CardContent>

@@ -17,4 +17,24 @@ export const INITIAL_STATE_PROFILE = {
     name: "",
     role: "",
     avatar_url: "",
-}
+};
+
+export const INITIAL_CREATE_USER_FORM = {
+    name: "",
+    role: "",
+    email: "",
+    password: "",
+    avatar_url: "",
+};
+
+export const INITIAL_STATE_CREATE_USER = {
+    status: 'idle',
+    errors: {
+        email: [],
+        password: [],
+        name: [],
+        role: [],
+        avatar_url: [],
+        _form: [],
+    }
+};
