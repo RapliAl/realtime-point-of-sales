@@ -22,7 +22,7 @@ export default function FormInput<T extends FieldValues>(
         <FormField
             control={form.control}
             name={name}
-            render={({field: {...rest} }) => (
+            render={({field: {...rest}}) => (
                 <FormItem>
                     <FormLabel>{label}</FormLabel>
                     <FormControl>
@@ -44,9 +44,6 @@ export default function FormInput<T extends FieldValues>(
                             />
                         )}
                     </FormControl>
-                    <FormDescription>
-                        Place Your Email Here!
-                    </FormDescription>
                     <FormMessage className="text-xs"/>
                 </FormItem>
             )}

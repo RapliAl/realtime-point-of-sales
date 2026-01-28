@@ -65,9 +65,6 @@ export default function FormSelect<T extends FieldValues>(
                             </SelectContent>
                         </Select>
                     </FormControl>
-                    <FormDescription>
-                        Place Your Email Here!
-                    </FormDescription>
                     <FormMessage className="text-xs"/>
                 </FormItem>
             )}
