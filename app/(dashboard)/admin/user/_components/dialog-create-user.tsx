@@ -14,12 +14,13 @@ import {CreateUserForm, createUserSchema} from "@/validations/auth-validation";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {
     INITIAL_CREATE_USER_FORM,
-    INITIAL_STATE_CREATE_USER,
+    INITIAL_STATE_CREATE_USER, ROLE_LISTS,
 } from "@/constants/auth-constants";
 import {startTransition, useActionState, useEffect} from "react";
 import {toast} from "sonner";
 import {useForm} from "react-hook-form";
 import {createUser} from "@/app/(dashboard)/admin/user/action";
+import FormSelect from "@/components/common/form-select";
 
 export default function DialogCreateUser({refetch}: { refetch: () => void }) {
     const form = useForm<CreateUserForm>({
@@ -78,11 +79,11 @@ export default function DialogCreateUser({refetch}: { refetch: () => void }) {
                         label="Name"
                         placeholder="Insert Your Name"
                     />
-                    <FormInput
+                    <FormSelect
                         form={form}
                         name="role"
                         label="Role"
-                        placeholder="Insert Your Role"
+                        selectItem={ROLE_LISTS}
                     />
                     <FormInput
                         form={form}
