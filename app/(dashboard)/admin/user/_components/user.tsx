@@ -8,11 +8,13 @@ import {createClient} from "@/lib/supabase/client";
 import {toast} from "sonner";
 import DataTable from "@/components/common/data-table";
 import {HEADER_TABLE_USER} from "@/constants/user-constant";
-import {useMemo} from "react";
+import {useMemo, useState} from "react";
 import DropdownAction from "@/components/common/dropwdown-action";
 import {Pencil, Trash2} from "lucide-react";
 import useDataTable from "@/hooks/use-data-table";
 import DialogCreateUser from "@/app/(dashboard)/admin/user/_components/dialog-create-user";
+import {Profile} from "@/types/auth";
+import DialogUpdateUser from "@/app/(dashboard)/admin/user/_components/dialog-update-user";
 
 export default function UserManagement() {
     const supabase = createClient();
@@ -42,6 +44,15 @@ export default function UserManagement() {
         }
     });
 
+    const [selectedAction, setSelectedAction] = useState<{
+        data: Profile,
+        type: "edit" | "delete"
+    } | null>(null);
+
+    const handleChangeAction = (open: boolean) => {
+        if (!open) setSelectedAction(null);
+    };
+
     const filteredData = useMemo(() => {
         return (users?.data || []).map(((user, index) => {
                 return [
@@ -60,6 +71,10 @@ export default function UserManagement() {
                                 </span>
                                 ),
                                 action: () => {
+                                    setSelectedAction({
+                                        data: user,
+                                        type: "edit"
+                                    })
                                 }
                             },
                             {
@@ -82,6 +97,7 @@ export default function UserManagement() {
     const totalPages = useMemo(() => {
         return users && users.count !== null ? Math.ceil(users.count / currentLimit) : 0
     }, [users])
+
 
     return (
         <div className="w-full">
@@ -112,6 +128,8 @@ export default function UserManagement() {
                 onChangePage={handleChangePage}
                 onChangeLimit={handleChangeLimit}
             />
+            <DialogUpdateUser open={selectedAction !== null && selectedAction.type === "edit"} refetch={refetch}
+                              currentData={selectedAction?.data} handleChangeAction={handleChangeAction}/>
         </div>
     )
 }
