@@ -15,6 +15,7 @@ import useDataTable from "@/hooks/use-data-table";
 import DialogCreateUser from "@/app/(dashboard)/admin/user/_components/dialog-create-user";
 import {Profile} from "@/types/auth";
 import DialogUpdateUser from "@/app/(dashboard)/admin/user/_components/dialog-update-user";
+import DialogDeleteUser from "@/app/(dashboard)/admin/user/_components/dialog-delete-user";
 
 export default function UserManagement() {
     const supabase = createClient();
@@ -34,7 +35,7 @@ export default function UserManagement() {
                 .select('*', {count: "exact"})
                 .range((currentPage - 1) * currentLimit, currentPage * currentLimit - 1)
                 .order("created_at")
-                .ilike("name", `%${currentSearch}%`);
+                .ilike("name", `%${currentSearch}%`)
 
             if (result.error) toast.error('Get User Data Failed', {
                 description: result.error.message
@@ -56,7 +57,7 @@ export default function UserManagement() {
     const filteredData = useMemo(() => {
         return (users?.data || []).map(((user, index) => {
                 return [
-                    index + 1,
+                    currentLimit * (currentPage - 1) + index + 1,
                     user.id,
                     user.name,
                     user.role,
@@ -86,6 +87,10 @@ export default function UserManagement() {
                                 ),
                                 variant: "destructive",
                                 action: () => {
+                                    setSelectedAction({
+                                        data: user,
+                                        type: "delete"
+                                    })
                                 }
                             }
                         ]}/>
@@ -128,8 +133,18 @@ export default function UserManagement() {
                 onChangePage={handleChangePage}
                 onChangeLimit={handleChangeLimit}
             />
-            <DialogUpdateUser open={selectedAction !== null && selectedAction.type === "edit"} refetch={refetch}
-                              currentData={selectedAction?.data} handleChangeAction={handleChangeAction}/>
+            <DialogUpdateUser
+                open={selectedAction !== null && selectedAction.type === "edit"}
+                refetch={refetch}
+                currentData={selectedAction?.data}
+                handleChangeAction={handleChangeAction}
+            />
+            <DialogDeleteUser
+                open={selectedAction !== null && selectedAction.type === "delete"}
+                refetch={refetch}
+                currentData={selectedAction?.data}
+                handleChangeAction={handleChangeAction}
+            />
         </div>
     )
 }

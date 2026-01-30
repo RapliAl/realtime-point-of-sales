@@ -10,12 +10,18 @@ import {UpdateUserForm, updateUserSchema} from "@/validations/auth-validation";
 import {Profile} from "@/types/auth";
 import {Dialog} from "@/components/ui/dialog";
 
-export default function DialogUpdateUser({refetch, currentData, handleChangeAction, open}: {
-    refetch: () => void,
-    currentData?: Profile,
-    open?: boolean,
-    handleChangeAction?: (open: boolean) => void
-}) {
+export default function DialogUpdateUser(
+    {
+        refetch,
+        currentData,
+        handleChangeAction,
+        open
+    }: {
+        refetch: () => void,
+        currentData?: Profile,
+        open?: boolean,
+        handleChangeAction?: (open: boolean) => void
+    }) {
     const form = useForm<UpdateUserForm>({
         resolver: zodResolver(updateUserSchema),
     });
