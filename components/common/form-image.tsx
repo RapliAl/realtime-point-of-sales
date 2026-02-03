@@ -57,7 +57,7 @@ export default function FormImage<T extends FieldValues>(
                         </div>
                     </FormControl>
                     <FormDescription>
-                        Place Your Email Here!
+                        Recommended size 150x150 . Max size 1MB.
                     </FormDescription>
                     <FormMessage className="text-xs"/>
                 </FormItem>

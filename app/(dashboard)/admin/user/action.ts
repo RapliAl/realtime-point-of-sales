@@ -4,7 +4,6 @@ import {AuthFormState} from "@/types/auth";
 import {createUserSchema, updateUserSchema} from "@/validations/auth-validation";
 import {createClient} from "@/lib/supabase/server";
 import uploadFile, {deleteFile} from "@/actions/storage-actions";
-import {validate} from "json-schema";
 
 export async function createUser(prevState: AuthFormState, formData: FormData) {
     let validatedFields = createUserSchema.safeParse({

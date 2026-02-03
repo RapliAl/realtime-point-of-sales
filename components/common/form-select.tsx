@@ -1,7 +1,5 @@
 import {FieldValues, Path, UseFormReturn} from "react-hook-form";
 import {FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
-import {Input} from "@/components/ui/input";
-import {Textarea} from "@/components/ui/textarea";
 import {
     Select,
     SelectContent,
@@ -12,7 +10,6 @@ import {
     SelectValue
 } from "@/components/ui/select";
 import {cn} from "@/lib/utils";
-import {Label} from "@/components/ui/label";
 
 
 export default function FormSelect<T extends FieldValues>(

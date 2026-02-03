@@ -51,7 +51,7 @@ export default function FormUser<T extends FieldValues>(
                             type="email"
                             name={"email" as Path<T>}
                             label="Email"
-                            placeholder="Insert Your Email Here"
+                            placeholder="Insert Your Email "
                         />
                     }
                     <FormInput
@@ -78,7 +78,7 @@ export default function FormUser<T extends FieldValues>(
                             form={form}
                             name={"password" as Path<T>}
                             label="Password"
-                            placeholder="Insert Your Password Here"
+                            placeholder="Insert Your Password "
                         />
                     }
                     <DialogFooter>
