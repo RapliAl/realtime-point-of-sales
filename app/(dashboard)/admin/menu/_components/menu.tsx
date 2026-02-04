@@ -19,6 +19,8 @@ import Image from "next/image"
 import DialogCreateMenu from "@/app/(dashboard)/admin/menu/_components/dialog-create-menu";
 import DialogUpdateUser from "@/app/(dashboard)/admin/user/_components/dialog-update-user";
 import DialogUpdateMenu from "@/app/(dashboard)/admin/menu/_components/dialog-update-menu";
+import DialogDeleteUser from "@/app/(dashboard)/admin/user/_components/dialog-delete-user";
+import DialogDeleteMenu from "@/app/(dashboard)/admin/menu/_components/dialog-delete-menu";
 
 export default function MenuManagement() {
     const supabase = createClient();
@@ -166,6 +168,12 @@ export default function MenuManagement() {
             />
             <DialogUpdateMenu
                 open={selectedAction !== null && selectedAction.type === "edit"}
+                refetch={refetch}
+                currentData={selectedAction?.data}
+                handleChangeAction={handleChangeAction}
+            />
+            <DialogDeleteMenu
+                open={selectedAction !== null && selectedAction.type === "delete"}
                 refetch={refetch}
                 currentData={selectedAction?.data}
                 handleChangeAction={handleChangeAction}
