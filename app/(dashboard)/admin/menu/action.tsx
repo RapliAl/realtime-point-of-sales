@@ -4,7 +4,6 @@ import uploadFile, {deleteFile} from "@/actions/storage-actions";
 import {createClient} from "@/lib/supabase/server";
 import {menuSchema} from "@/validations/validation-menu";
 import {MenuFormState} from "@/types/menu";
-import {AuthFormState} from "@/types/auth";
 
 export async function createMenu(prevState: MenuFormState, formData: FormData) {
     let validatedFields = menuSchema.safeParse({
@@ -183,14 +182,6 @@ export async function deleteMenu(prevState: MenuFormState, formData: FormData) {
             status: "error",
             errors: {
                 _form: [errors?._form?.[0] ?? "Undefined Error"],
-                name: undefined,
-                description: undefined,
-                price: undefined,
-                discount: undefined,
-                category: undefined,
-                image_url: undefined,
-                is_available: undefined,
-
             },
         };
     }
@@ -206,28 +197,12 @@ export async function deleteMenu(prevState: MenuFormState, formData: FormData) {
             status: "error",
             errors: {
                 _form: [error.message],
-                name: undefined,
-                description: undefined,
-                price: undefined,
-                discount: undefined,
-                category: undefined,
-                image_url: undefined,
-                is_available: undefined,
             },
         };
     }
 
     return {
         status: "success",
-        errors: {
-            name: undefined,
-            description: undefined,
-            price: undefined,
-            discount: undefined,
-            category: undefined,
-            image_url: undefined,
-            is_available: undefined,
-        }
     }
 }
 

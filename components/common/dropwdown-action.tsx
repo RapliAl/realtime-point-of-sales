@@ -4,7 +4,7 @@ import {Button} from "@/components/ui/button";
 import {EllipsisVertical} from "lucide-react";
 
 export default function DropdownAction({menu}: {
-    menu: {
+    menu?: {
         label: string | ReactNode;
         variant?: "destructive" | "default";
         action?: () => void;
@@ -19,7 +19,7 @@ export default function DropdownAction({menu}: {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-32">
-                {menu.map((item, index) => (
+                {(menu ?? []).map((item, index) => (
                     <DropdownMenuItem
                         key={`dropdown-action-${index}`}
                         variant={item.variant || "default"}

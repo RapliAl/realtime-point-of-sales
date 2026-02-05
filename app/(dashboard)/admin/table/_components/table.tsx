@@ -11,16 +11,14 @@ import {useMemo, useState} from "react";
 import DropdownAction from "@/components/common/dropwdown-action";
 import {Pencil, Trash2} from "lucide-react";
 import useDataTable from "@/hooks/use-data-table";
-import {Profile} from "@/types/auth";
-import {Menu} from "@/validations/validation-menu";
-import {cn, convertIDR} from "@/lib/utils";
-import Image from "next/image"
+import {cn} from "@/lib/utils";
+import {HEADER_TABLE_MENU} from "@/constants/menu-constants";
 import DialogCreateMenu from "@/app/(dashboard)/admin/menu/_components/dialog-create-menu";
 import DialogUpdateMenu from "@/app/(dashboard)/admin/menu/_components/dialog-update-menu";
 import DialogDeleteMenu from "@/app/(dashboard)/admin/menu/_components/dialog-delete-menu";
-import {HEADER_TABLE_TABLE} from "@/constants/table-constants";
+import {Table} from "@/validations/table-validation";
 
-export default function MenuManagement() {
+export default function TableManagement() {
     const supabase = createClient();
     const {
         currentPage,
@@ -30,22 +28,26 @@ export default function MenuManagement() {
         handleChangeLimit,
         handleChangeSearch
     } = useDataTable()
-    const {data: menus, isLoading, refetch} = useQuery({
-        queryKey: ["menus", currentPage, currentLimit, currentSearch],
+    const {data: tables, isLoading, refetch} = useQuery({
+        queryKey: ["tables", currentPage, currentLimit, currentSearch],
         queryFn: async () => {
             const query = supabase
-                .from("menus")
+                .from("tables")
                 .select('*', {count: "exact"})
                 .range((currentPage - 1) * currentLimit, currentPage * currentLimit - 1)
                 .order("created_at");
 
             if (currentSearch) {
-                query.or(`name.ilike.%${currentSearch}%, category.ilike.%${currentSearch}%`)
+                query.or(
+                    `name.ilike.%${currentSearch}%,
+                    capacity.ilike.%${currentSearch}%,
+                    status.ilike.%${currentSearch}%`
+                )
             }
 
             const result = await query;
 
-            if (result.error) toast.error('Get Menu Data Failed', {
+            if (result.error) toast.error('Get Table Data Failed', {
                 description: result.error.message
             });
 
@@ -54,7 +56,7 @@ export default function MenuManagement() {
     });
 
     const [selectedAction, setSelectedAction] = useState<{
-        data: Profile,
+        data: Table,
         type: "edit" | "delete"
     } | null>(null);
 
@@ -63,38 +65,28 @@ export default function MenuManagement() {
     };
 
     const filteredData = useMemo(() => {
-        return (menus?.data || []).map(((menu: Menu, index) => {
+        return (tables?.data || []).map(((table: Table, index) => {
                 return [
                     currentLimit * (currentPage - 1) + index + 1,
-                    <div key={`name-${menu.id}`} className="flex items-center gap-2">
-                        <Image
-                            src={menu.image_url as string}
-                            alt={menu.name}
-                            width={40}
-                            height={40}
-                            className="rounded"
-                        />
-                        {menu.name}
+                    <div key={`name-${table.id}`} className="flex flex-col">
+                        <h4 className="font-bold">{table.name}</h4>
+                        <p className="text-xs">{table.description}</p>
                     </div>,
-                    menu.category,
-                    <div key={`price-${menu.price}`}>
-                        <p>Based: {convertIDR(menu.price)}</p>
-                        <p>Discount: {menu.discount}</p>
-                        <p>
-                            After Discount:{" "}
-                            {convertIDR(menu.price - (menu.price * menu.discount) / 100)}
-                        </p>
+
+                    table.capacity,
+
+                    <div key={`status-${table.status}`}
+                         className={cn("px-2 py-1 rounded-full text-white w-fit capitalize", {
+                             "bg-green-600": table.status === "available",
+                             "bg-red-600": table.status === "unavailable",
+                             "bg-yellow-600": table.status === "reserved",
+                         })}>
+                        {table.status}
                     </div>,
-                    <div key={`isAvailable-${menu.is_available}`} className={cn(
-                        "px-2 py-1 rounded-full text-white w-fit",
-                        menu.is_available ? "bg-green-500" : "bg-red-500"
-                    )}
-                    >
-                        {menu.is_available ? "Available" : "Not Available"}
-                    </div>,
+
                     <DropdownAction
-                        key={menu.id}
-                        menu={[
+                        key={table.id}
+                        table={[
                             {
                                 label: (
                                     <span className="flex items-center gap-2">
@@ -104,7 +96,7 @@ export default function MenuManagement() {
                                 ),
                                 action: () => {
                                     setSelectedAction({
-                                        data: menu,
+                                        data: table,
                                         type: "edit"
                                     })
                                 }
@@ -112,14 +104,14 @@ export default function MenuManagement() {
                             {
                                 label: (
                                     <span className="flex items-center gap-2">
-                                    <Trash2 className="text-red-500"/>
+                                    <Trash2 className="text-red-600"/>
                                     Delete
                                 </span>
                                 ),
                                 variant: "destructive",
                                 action: () => {
                                     setSelectedAction({
-                                        data: menu,
+                                        data: table,
                                         type: "delete"
                                     })
                                 }
@@ -128,17 +120,17 @@ export default function MenuManagement() {
                 ]
             }
         ))
-    }, [menus])
+    }, [tables])
 
     const totalPages = useMemo(() => {
-        return menus && menus.count !== null ? Math.ceil(menus.count / currentLimit) : 0
-    }, [menus])
+        return tables && tables.count !== null ? Math.ceil(tables.count / currentLimit) : 0
+    }, [tables])
 
 
     return (
         <div className="w-full">
             <div className="flex flex-col lg:flex-row mb-4 gap-2 justify-between w-full">
-                <h1 className="text-2xl font-bold"> MENU MANAGEMENT </h1>
+                <h1 className="text-2xl font-bold"> TABLE MANAGEMENT </h1>
                 <div className="flex gap-2">
                     <Input
                         placeholder="Search By Name or Category"
@@ -155,7 +147,7 @@ export default function MenuManagement() {
                 </div>
             </div>
             <DataTable
-                header={HEADER_TABLE_TABLE}
+                header={HEADER_TABLE_MENU}
                 data={filteredData}
                 isLoading={isLoading}
                 totalPages={totalPages}
