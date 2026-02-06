@@ -1,15 +1,12 @@
 import {zodResolver} from "@hookform/resolvers/zod";
-import {startTransition, useActionState, useEffect, useState} from "react";
+import {startTransition, useActionState, useEffect} from "react";
 import {toast} from "sonner";
 import {useForm} from "react-hook-form";
-import {Preview} from "@/types/general";
 import {Dialog} from "@/components/ui/dialog";
-import {updateTable} from "@/app/(dashboard)/admin/menu/action";
-import {TableForm} from "@/validations/validation-menu";
-import {INITIAL_STATE_MENU} from "@/constants/menu-constants";
-import {Table} from "@/types/menu";
-import FormTable from "@/app/(dashboard)/admin/menu/_components/form-menu";
-import {tableSchema} from "@/validations/table-validation";
+import {updateTable} from "@/app/(dashboard)/admin/table/action";
+import FormTable from "@/app/(dashboard)/admin/table/_components/form-table";
+import {Table, TableForm, tableFormSchema} from "@/validations/table-validation";
+import {INITIAL_STATE_TABLE} from "@/constants/table-constants";
 
 export default function DialogUpdateTable(
     {
@@ -24,27 +21,19 @@ export default function DialogUpdateTable(
         handleChangeAction?: (open: boolean) => void
     }) {
     const form = useForm<TableForm>({
-        resolver: zodResolver(tableSchema),
+        resolver: zodResolver(tableFormSchema),
     });
 
     const [updateTableState, updateTableAction, isPendingUpdateTable] =
-        useActionState(updateTable, INITIAL_STATE_MENU)
-
-    const [preview, setPreview] = useState<Preview | undefined>(undefined)
+        useActionState(updateTable, INITIAL_STATE_TABLE)
 
     const onSubmit = form.handleSubmit(async (data) => {
         const formData = new FormData();
 
-        if (currentData?.id !== data.id) {
-            Object.entries(data).forEach(([key, value]) => {
-                formData.append(key, key === "id" ? preview?.file ?? "" : value);
-            });
-            formData.append("old_image_url", currentData?.image_url ?? "");
-        } else {
-            Object.entries(data).forEach(([Key, value]) => {
-                formData.append(Key, value)
-            });
-        }
+        Object.entries(data).forEach(([Key, value]) => {
+            formData.append(Key, value)
+        });
+
         formData.append("id", currentData?.id ?? "")
 
         startTransition(() => {
@@ -71,8 +60,8 @@ export default function DialogUpdateTable(
         if (currentData) {
             form.setValue("name", currentData.name as string)
             form.setValue("description", currentData.description as string)
-            form.setValue("capacity", currentData.capacity as string)
-            form.setValue("status", currentData.status.toString())
+            form.setValue("capacity", currentData.capacity.toString())
+            form.setValue("status", currentData.status)
         }
     }, [currentData]);
 
@@ -83,8 +72,6 @@ export default function DialogUpdateTable(
                 onSubmit={onSubmit}
                 isLoading={isPendingUpdateTable}
                 type={"Update"}
-                preview={preview}
-                setPreview={setPreview}
             />
         </Dialog>
     );
