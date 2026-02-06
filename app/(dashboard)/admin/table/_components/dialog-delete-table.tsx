@@ -1,11 +1,11 @@
 import DialogDelete from "@/components/common/dialog-delete";
 import {startTransition, useActionState, useEffect} from "react";
 import {toast} from "sonner";
-import {Menu} from "@/types/menu";
-import {INITIAL_STATE_MENU} from "@/constants/menu-constants";
-import {deleteMenu} from "@/app/(dashboard)/admin/menu/action";
+import {deleteTable} from "@/app/(dashboard)/admin/table/action";
+import {INITIAL_STATE_TABLE} from "@/constants/table-constants";
+import {Table} from "@/validations/table-validation";
 
-export default function DialogDeleteMenu(
+export default function DialogDeleteTable(
     {
         open,
         refetch,
@@ -14,42 +14,43 @@ export default function DialogDeleteMenu(
     }: {
         open: boolean,
         refetch: () => void,
-        currentData?: Menu;
+        currentData?: Table;
         handleChangeAction: (open: boolean) => void
     }) {
 
-    const [deleteMenuState, deleteMenuAction, isPendingDeleteMenu] = useActionState(deleteMenu, INITIAL_STATE_MENU);
+    const [deleteTableState, deleteTableAction, isPendingDeleteTable] = useActionState(
+        deleteTable, INITIAL_STATE_TABLE
+    );
 
     const onSubmit = () => {
         const formData = new FormData();
         formData.append("id", currentData!.id as string);
-        formData.append("image_url", currentData!.image_url as string);
 
         startTransition(() => {
-            deleteMenuAction(formData);
+            deleteTableAction(formData);
         });
     }
 
     useEffect(() => {
-        if (deleteMenuState?.status === 'error') {
-            toast.error('Delete Menu Failed', {
-                description: deleteMenuState.errors?._form?.[0]
+        if (deleteTableState?.status === 'error') {
+            toast.error('Delete Table Failed', {
+                description: deleteTableState.errors?._form?.[0]
             });
         }
 
-        if (deleteMenuState?.status === "success") {
-            toast.success("Menu Updated Successfully");
+        if (deleteTableState?.status === "success") {
+            toast.success("Table Updated Successfully");
             handleChangeAction?.(false);
             refetch();
         }
-    }, [deleteMenuState])
+    }, [deleteTableState])
 
     return (
         <DialogDelete
             open={open}
             onOpenChange={handleChangeAction}
             onSubmit={onSubmit}
-            isLoading={isPendingDeleteMenu}
+            isLoading={isPendingDeleteTable}
             title="User"
         />
     )
