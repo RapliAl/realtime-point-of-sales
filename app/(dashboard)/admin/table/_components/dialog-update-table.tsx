@@ -1,20 +1,17 @@
 import {zodResolver} from "@hookform/resolvers/zod";
-import {INITIAL_STATE_UPDATE_USER} from "@/constants/auth-constants";
 import {startTransition, useActionState, useEffect, useState} from "react";
 import {toast} from "sonner";
 import {useForm} from "react-hook-form";
-import {updateUser} from "@/app/(dashboard)/admin/user/action";
 import {Preview} from "@/types/general";
-import FormUser from "@/app/(dashboard)/admin/user/_components/ form-user";
-import {Profile} from "@/types/auth";
 import {Dialog} from "@/components/ui/dialog";
-import {updateMenu} from "@/app/(dashboard)/admin/menu/action";
-import {MenuForm, menuFormSchema} from "@/validations/validation-menu";
+import {updateTable} from "@/app/(dashboard)/admin/menu/action";
+import {TableForm} from "@/validations/validation-menu";
 import {INITIAL_STATE_MENU} from "@/constants/menu-constants";
-import {Menu} from "@/types/menu";
-import FormMenu from "@/app/(dashboard)/admin/menu/_components/form-menu";
+import {Table} from "@/types/menu";
+import FormTable from "@/app/(dashboard)/admin/menu/_components/form-menu";
+import {tableSchema} from "@/validations/table-validation";
 
-export default function DialogUpdateMenu(
+export default function DialogUpdateTable(
     {
         refetch,
         currentData,
@@ -22,25 +19,25 @@ export default function DialogUpdateMenu(
         open
     }: {
         refetch: () => void,
-        currentData?: Menu,
+        currentData?: Table,
         open?: boolean,
         handleChangeAction?: (open: boolean) => void
     }) {
-    const form = useForm<MenuForm>({
-        resolver: zodResolver(menuFormSchema),
+    const form = useForm<TableForm>({
+        resolver: zodResolver(tableSchema),
     });
 
-    const [updateMenuState, updateMenuAction, isPendingUpdateMenu] =
-        useActionState(updateMenu, INITIAL_STATE_MENU)
+    const [updateTableState, updateTableAction, isPendingUpdateTable] =
+        useActionState(updateTable, INITIAL_STATE_MENU)
 
     const [preview, setPreview] = useState<Preview | undefined>(undefined)
 
     const onSubmit = form.handleSubmit(async (data) => {
         const formData = new FormData();
 
-        if (currentData?.image_url !== data.image_url) {
+        if (currentData?.id !== data.id) {
             Object.entries(data).forEach(([key, value]) => {
-                formData.append(key, key === "image_url" ? preview?.file ?? "" : value);
+                formData.append(key, key === "id" ? preview?.file ?? "" : value);
             });
             formData.append("old_image_url", currentData?.image_url ?? "");
         } else {
@@ -51,46 +48,40 @@ export default function DialogUpdateMenu(
         formData.append("id", currentData?.id ?? "")
 
         startTransition(() => {
-            updateMenuAction(formData);
+            updateTableAction(formData);
         });
     })
 
     useEffect(() => {
-        if (updateMenuState?.status === 'error') {
-            toast.error('Update User Failed', {
-                description: updateMenuState.errors?._form?.[0]
+        if (updateTableState?.status === 'error') {
+            toast.error('Update Table Failed', {
+                description: updateTableState.errors?._form?.[0]
             });
         }
 
-        if (updateMenuState?.status === "success") {
-            toast.success("User Updated Successfully");
+        if (updateTableState?.status === "success") {
+            toast.success("Table Updated Successfully");
             form.reset();
             handleChangeAction?.(false);
             refetch();
         }
-    }, [updateMenuState])
+    }, [updateTableState])
 
     useEffect(() => {
         if (currentData) {
             form.setValue("name", currentData.name as string)
             form.setValue("description", currentData.description as string)
-            form.setValue("price", currentData.price.toString())
-            form.setValue("discount", currentData.discount.toString())
-            form.setValue("category", currentData.category as string)
-            form.setValue("is_available", currentData.is_available.toString())
-            form.setValue("image_url", currentData.image_url as string)
-            setPreview({
-                file: new File([], currentData.image_url as string),
-                displayUrl: currentData.image_url as string
-            })
+            form.setValue("capacity", currentData.capacity as string)
+            form.setValue("status", currentData.status.toString())
         }
     }, [currentData]);
+
     return (
         <Dialog open={open} onOpenChange={handleChangeAction}>
-            <FormMenu
+            <FormTable
                 form={form}
                 onSubmit={onSubmit}
-                isLoading={isPendingUpdateMenu}
+                isLoading={isPendingUpdateTable}
                 type={"Update"}
                 preview={preview}
                 setPreview={setPreview}

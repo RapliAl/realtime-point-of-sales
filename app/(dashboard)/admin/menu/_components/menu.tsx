@@ -18,7 +18,7 @@ import Image from "next/image"
 import DialogCreateMenu from "@/app/(dashboard)/admin/menu/_components/dialog-create-menu";
 import DialogUpdateMenu from "@/app/(dashboard)/admin/menu/_components/dialog-update-menu";
 import DialogDeleteMenu from "@/app/(dashboard)/admin/menu/_components/dialog-delete-menu";
-import {HEADER_TABLE_TABLE} from "@/constants/table-constants";
+import {HEADER_TABLE_MENU} from "@/constants/menu-constants";
 
 export default function MenuManagement() {
     const supabase = createClient();
@@ -155,7 +155,7 @@ export default function MenuManagement() {
                 </div>
             </div>
             <DataTable
-                header={HEADER_TABLE_TABLE}
+                header={HEADER_TABLE_MENU}
                 data={filteredData}
                 isLoading={isLoading}
                 totalPages={totalPages}

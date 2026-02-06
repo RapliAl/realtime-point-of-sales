@@ -3,10 +3,10 @@ import {startTransition, useActionState, useEffect, useState} from "react";
 import {toast} from "sonner";
 import {useForm} from "react-hook-form";
 import {Preview} from "@/types/general";
+import {createMenu} from "@/app/(dashboard)/admin/menu/action";
 import {MenuForm, menuFormSchema} from "@/validations/validation-menu";
 import {INITIAL_MENU, INITIAL_STATE_MENU} from "@/constants/menu-constants";
 import FormMenu from "@/app/(dashboard)/admin/menu/_components/form-menu";
-import {createMenu} from "@/app/(dashboard)/admin/menu/action";
 
 export default function DialogCreateMenu({refetch}: { refetch: () => void }) {
     const form = useForm<MenuForm>({
@@ -14,7 +14,7 @@ export default function DialogCreateMenu({refetch}: { refetch: () => void }) {
         defaultValues: INITIAL_MENU
     });
 
-    const [createMenuState, createMenuAction, isPendingCreateMenu] =
+    const [createMenuState, createMenuAction, isPendingCreateUser] =
         useActionState(createMenu, INITIAL_STATE_MENU)
 
     const [preview, setPreview] = useState<Preview | undefined>(undefined)
@@ -49,7 +49,7 @@ export default function DialogCreateMenu({refetch}: { refetch: () => void }) {
         <FormMenu
             form={form}
             onSubmit={onSubmit}
-            isLoading={isPendingCreateMenu}
+            isLoading={isPendingCreateUser}
             type={"Create"}
             preview={preview}
             setPreview={setPreview}

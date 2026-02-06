@@ -12,11 +12,9 @@ import DropdownAction from "@/components/common/dropwdown-action";
 import {Pencil, Trash2} from "lucide-react";
 import useDataTable from "@/hooks/use-data-table";
 import {cn} from "@/lib/utils";
-import {HEADER_TABLE_MENU} from "@/constants/menu-constants";
-import DialogCreateMenu from "@/app/(dashboard)/admin/menu/_components/dialog-create-menu";
-import DialogUpdateMenu from "@/app/(dashboard)/admin/menu/_components/dialog-update-menu";
-import DialogDeleteMenu from "@/app/(dashboard)/admin/menu/_components/dialog-delete-menu";
 import {Table} from "@/validations/table-validation";
+import {HEADER_TABLE_TABLE} from "@/constants/table-constants";
+import DialogCreateTable from "@/app/(dashboard)/admin/table/_components/dialog-create-table";
 
 export default function TableManagement() {
     const supabase = createClient();
@@ -86,7 +84,7 @@ export default function TableManagement() {
 
                     <DropdownAction
                         key={table.id}
-                        table={[
+                        menu={[
                             {
                                 label: (
                                     <span className="flex items-center gap-2">
@@ -142,12 +140,12 @@ export default function TableManagement() {
                                 Create
                             </Button>
                         </DialogTrigger>
-                        <DialogCreateMenu refetch={refetch}/>
+                        <DialogCreateTable refetch={refetch}/>
                     </Dialog>
                 </div>
             </div>
             <DataTable
-                header={HEADER_TABLE_MENU}
+                header={HEADER_TABLE_TABLE}
                 data={filteredData}
                 isLoading={isLoading}
                 totalPages={totalPages}
@@ -155,18 +153,6 @@ export default function TableManagement() {
                 currentLimit={currentLimit}
                 onChangePage={handleChangePage}
                 onChangeLimit={handleChangeLimit}
-            />
-            <DialogUpdateMenu
-                open={selectedAction !== null && selectedAction.type === "edit"}
-                refetch={refetch}
-                currentData={selectedAction?.data}
-                handleChangeAction={handleChangeAction}
-            />
-            <DialogDeleteMenu
-                open={selectedAction !== null && selectedAction.type === "delete"}
-                refetch={refetch}
-                currentData={selectedAction?.data}
-                handleChangeAction={handleChangeAction}
             />
         </div>
     )

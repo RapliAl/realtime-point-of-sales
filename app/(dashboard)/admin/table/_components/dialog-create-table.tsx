@@ -1,58 +1,52 @@
 import {zodResolver} from "@hookform/resolvers/zod";
-import {startTransition, useActionState, useEffect, useState} from "react";
+import {startTransition, useActionState, useEffect} from "react";
 import {toast} from "sonner";
 import {useForm} from "react-hook-form";
-import {Preview} from "@/types/general";
-import {MenuForm, menuFormSchema} from "@/validations/validation-menu";
-import {INITIAL_MENU, INITIAL_STATE_MENU} from "@/constants/menu-constants";
-import FormMenu from "@/app/(dashboard)/admin/menu/_components/form-menu";
-import {createMenu} from "@/app/(dashboard)/admin/menu/action";
+import {TableForm, tableFormSchema} from "@/validations/table-validation";
+import {INITIAL_STATE_TABLE, INITIAL_TABLE} from "@/constants/table-constants";
+import {createTable} from "@/app/(dashboard)/admin/table/action";
+import FormTable from "@/app/(dashboard)/admin/table/_components/form-table";
 
 export default function DialogCreateTable({refetch}: { refetch: () => void }) {
-    const form = useForm<MenuForm>({
-        resolver: zodResolver(menuFormSchema),
-        defaultValues: INITIAL_MENU
+    const form = useForm<TableForm>({
+        resolver: zodResolver(tableFormSchema),
+        defaultValues: INITIAL_TABLE
     });
 
-    const [createMenuState, createMenuAction, isPendingCreateMenu] =
-        useActionState(createMenu, INITIAL_STATE_MENU)
-
-    const [preview, setPreview] = useState<Preview | undefined>(undefined)
+    const [createTableState, createTableAction, isPendingCreateTable] =
+        useActionState(createTable, INITIAL_STATE_TABLE)
 
     const onSubmit = form.handleSubmit(async (data) => {
         const formData = new FormData();
         Object.entries(data).forEach(([key, value]) => {
-            formData.append(key, key === "image_url" ? preview?.file ?? "" : value);
+            formData.append(key, value);
         });
         startTransition(() => {
-            createMenuAction(formData);
+            createTableAction(formData);
         });
     })
 
     useEffect(() => {
-        if (createMenuState?.status === 'error') {
-            toast.error('Create Menu Failed', {
-                description: createMenuState.errors?._form?.[0]
+        if (createTableState?.status === 'error') {
+            toast.error('Create Table Failed', {
+                description: createTableState.errors?._form?.[0]
             });
         }
 
-        if (createMenuState?.status === "success") {
-            toast.success("Menu Created Successfully");
+        if (createTableState?.status === "success") {
+            toast.success("Table Created Successfully");
             form.reset();
-            setPreview(undefined);
             document.querySelector<HTMLButtonElement>('[data-state="open"]')?.click();
             refetch();
         }
-    }, [createMenuState])
+    }, [createTableState])
 
     return (
-        <FormMenu
+        <FormTable
             form={form}
             onSubmit={onSubmit}
-            isLoading={isPendingCreateMenu}
-            type={"Create"}
-            preview={preview}
-            setPreview={setPreview}
+            isLoading={isPendingCreateTable}
+            type="Create"
         />
     );
 }
