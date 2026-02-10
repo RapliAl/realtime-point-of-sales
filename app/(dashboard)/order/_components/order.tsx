@@ -11,10 +11,10 @@ import {useMemo, useState} from "react";
 import DropdownAction from "@/components/common/dropwdown-action";
 import useDataTable from "@/hooks/use-data-table";
 import {cn} from "@/lib/utils";
-import {Table} from "@/validations/table-validation";
 import {HEADER_TABLE_ORDER} from "@/constants/order-constants";
 import {Property} from "csstype";
 import Order = Property.Order;
+import DialogCreateOrder from "@/app/(dashboard)/order/_components/dialog-create-order";
 
 
 export default function OrderManagement() {
@@ -27,6 +27,7 @@ export default function OrderManagement() {
         handleChangeLimit,
         handleChangeSearch
     } = useDataTable()
+
     const {data: orders, isLoading, refetch} = useQuery({
         queryKey: ["orders", currentPage, currentLimit, currentSearch],
         queryFn: async () => {
@@ -51,6 +52,19 @@ export default function OrderManagement() {
             });
 
             return result;
+        }
+    });
+
+    const {data: tables, refetch: refetchTables} = useQuery({
+        queryKey: ["tables"],
+        queryFn: async () => {
+            const result = await supabase
+                .from("tables")
+                .select("*")
+                .order("created_at")
+                .order("status");
+
+            return result.data;
         }
     });
 
@@ -110,6 +124,10 @@ export default function OrderManagement() {
                                 Create
                             </Button>
                         </DialogTrigger>
+                        <DialogCreateOrder
+                            refetch={refetch}
+                            tables={tables}
+                        />
                     </Dialog>
                 </div>
             </div>

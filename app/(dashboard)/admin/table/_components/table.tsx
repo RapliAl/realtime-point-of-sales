@@ -39,10 +39,8 @@ export default function TableManagement() {
 
             if (currentSearch) {
                 query.or(
-                    `name.ilike.%${currentSearch}%,
-                    capacity.ilike.%${currentSearch}%,
-                    status.ilike.%${currentSearch}%`
-                )
+                    `name.ilike.%${currentSearch}%,capacity.ilike.%${currentSearch}%`
+                );
             }
 
             const result = await query;
