@@ -7,14 +7,18 @@ import {useQuery} from "@tanstack/react-query";
 import {createClient} from "@/lib/supabase/client";
 import {toast} from "sonner";
 import DataTable from "@/components/common/data-table";
-import {useMemo, useState} from "react";
+import {startTransition, useActionState, useEffect, useMemo, useState} from "react";
 import DropdownAction from "@/components/common/dropwdown-action";
 import useDataTable from "@/hooks/use-data-table";
 import {cn} from "@/lib/utils";
-import {HEADER_TABLE_ORDER} from "@/constants/order-constants";
+import {HEADER_TABLE_ORDER, INITIAL_STATE_ORDER} from "@/constants/order-constants";
 import {Property} from "csstype";
 import Order = Property.Order;
 import DialogCreateOrder from "@/app/(dashboard)/order/_components/dialog-create-order";
+import {updateReservation} from "@/app/(dashboard)/order/action";
+import {INITIAL_STATE_ACTION} from "@/constants/general-constant";
+import {Ban, Link2Icon, ScrollText} from "lucide-react";
+import Link from "next/link";
 
 
 export default function OrderManagement() {
@@ -77,6 +81,74 @@ export default function OrderManagement() {
         if (!open) setSelectedAction(null);
     };
 
+    const [reservedState, reservedAction] = useActionState(updateReservation, INITIAL_STATE_ACTION)
+
+    const totalPages = useMemo(() => {
+        return orders && orders.count !== null ? Math.ceil(orders.count / currentLimit) : 0
+    }, [orders])
+
+    const handleReservation = async ({id, table_id, status}: {
+        id: string,
+        table_id: string,
+        status: string
+    }) => {
+        const formData = new FormData();
+        Object.entries({id, table_id, status}).forEach(([Key, value]) => {
+            formData.append(Key, value);
+        })
+
+        startTransition(() => {
+            reservedAction(formData);
+        })
+    }
+
+    useEffect(() => {
+        if (reservedState?.status === 'error') {
+            toast.error('Update Reservation Failed', {
+                description: reservedState.errors?._form?.[0]
+            });
+        }
+
+        if (reservedState?.status === "success") {
+            toast.success("Update Reservation Successfully");
+            refetch();
+            refetchTables()
+        }
+    }, [reservedState])
+
+    const reservedActionList = [
+        {
+            label: (
+                <span className="flex items-center gap-2 ">
+                    <Link2Icon/>
+                    Process
+                </span>
+            ),
+            action: (id: string, table_id: string) => {
+                handleReservation({
+                    id,
+                    table_id,
+                    status: "process",
+                })
+            }
+        },
+        {
+            label: (
+                <span className="flex items-center gap-2 ">
+                    <Ban className="text-red-500"/>
+                    Cancel
+                </span>
+            ),
+            action: (id: string, table_id: string) => {
+                handleReservation({
+                    id,
+                    table_id,
+                    status: "canceled",
+                })
+            }
+        }
+    ]
+
     const filteredData = useMemo(() => {
         return (orders?.data || []).map(((order, index) => {
                 return [
@@ -98,14 +170,25 @@ export default function OrderManagement() {
 
                     <DropdownAction
                         key={order.id}
-                        menu={[]}/>
+                        menu={
+                            order.status === "reserved" ? reservedActionList.map((item) => ({
+                                label: item.label,
+                                action: () => item.action(order.id, (order.tables as unknown as { id: string }).id)
+                            })) : [
+                                {
+                                    label: (
+                                        <Link href={`/order/${order.order_id}`} className="flex items-center gap-2">
+                                            <ScrollText/>
+                                            Details
+                                        </Link>
+                                    ),
+                                    type: "link"
+                                }
+                            ]
+                        }/>
                 ]
             }
         ))
-    }, [orders])
-
-    const totalPages = useMemo(() => {
-        return orders && orders.count !== null ? Math.ceil(orders.count / currentLimit) : 0
     }, [orders])
 
 
