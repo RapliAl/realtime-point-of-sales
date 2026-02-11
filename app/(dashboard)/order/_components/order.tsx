@@ -11,7 +11,7 @@ import {startTransition, useActionState, useEffect, useMemo, useState} from "rea
 import DropdownAction from "@/components/common/dropwdown-action";
 import useDataTable from "@/hooks/use-data-table";
 import {cn} from "@/lib/utils";
-import {HEADER_TABLE_ORDER, INITIAL_STATE_ORDER} from "@/constants/order-constants";
+import {HEADER_TABLE_ORDER} from "@/constants/order-constants";
 import {Property} from "csstype";
 import Order = Property.Order;
 import DialogCreateOrder from "@/app/(dashboard)/order/_components/dialog-create-order";
