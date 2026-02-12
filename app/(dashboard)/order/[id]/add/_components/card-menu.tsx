@@ -5,7 +5,10 @@ import {convertIDR} from "@/lib/utils";
 import {Button} from "@/components/ui/button";
 import {ShoppingCart} from "lucide-react";
 
-export default function CardMenu({menu}: { menu: Menu }) {
+export default function CardMenu({menu, onAddToCarts}: {
+    menu: Menu,
+    onAddToCarts: (menu: Menu, action: "increment" | "decrement ") => void
+}) {
     return (
         <Card key={menu.id} className="w-full h-fit border shadow-sm gap-0 p-0">
             <Image
@@ -27,8 +30,7 @@ export default function CardMenu({menu}: { menu: Menu }) {
                 <div className="text-xl font-bold">
                     {convertIDR(menu.price)}
                 </div>
-                <Button className="cursor-pointer" onClick={() => {
-                }}>
+                <Button className="cursor-pointer" onClick={() => onAddToCarts(menu, "increment")}>
                     <ShoppingCart/>
                 </Button>
 

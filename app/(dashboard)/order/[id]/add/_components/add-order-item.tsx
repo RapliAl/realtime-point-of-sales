@@ -10,8 +10,11 @@ import {FILTER_MENU} from "@/constants/order-constants";
 import CardMenu from "@/app/(dashboard)/order/[id]/add/_components/card-menu";
 import LoadingCardMenu from "@/app/(dashboard)/order/[id]/add/_components/loading-card-menu";
 import CardSection from "@/app/(dashboard)/order/[id]/add/_components/cart";
+import {useState} from "react";
+import {Cart} from "@/types/order";
+import {Menu} from "@/types/menu";
 
-export default function AddOrderItem({id}: { id: string }) {
+export function AddOrderItem({id}: { id: string }) {
     const supabase = createClient();
     const {
         currentSearch,
@@ -62,6 +65,40 @@ export default function AddOrderItem({id}: { id: string }) {
         enabled: !!id
     });
 
+    const [carts, setCarts] = useState<Cart[]>([]);
+
+    const handleAddToCart = (menu: Menu, action: "increment" | "decrement") => {
+        const existingItem = carts.find((item) => item.menu_id === menu.id);
+
+        if (existingItem) {
+            if (action === "decrement") {
+                if (existingItem.quantity > 1) {
+                    setCarts(carts.map((item) => item.menu_id === menu.id ? {
+                        ...item,
+                        quantity: item.quantity - 1,
+                        total: item.total - menu.price
+                    } : item))
+                } else {
+                    setCarts(carts.filter((item) => item.menu_id !== menu.id))
+                }
+            } else {
+                setCarts(carts.map((item) => item.menu_id === menu.id ? {
+                    ...item,
+                    quantity: item.quantity + 1,
+                    total: item.total + menu.price
+                } : item))
+            }
+        } else {
+            setCarts([...carts, {
+                menu_id: menu.id,
+                quantity: 1,
+                total: menu.price,
+                notes: "",
+                menu
+            }])
+        }
+    }
+
 
     return (
         <div className="flex flex-col lg:flex-row gap-4 w-full">
@@ -88,7 +125,7 @@ export default function AddOrderItem({id}: { id: string }) {
                 ) : (
                     <div className="grid grid-cols-2 lg:grid-cols-3 w-full gap-4">
                         {menus?.data?.map((menu) => (
-                            <CardMenu menu={menu} key={`menu-${menu.id}`}/>
+                            <CardMenu menu={menu} key={`menu-${menu.id}`} onAddToCarts={handleAddToCart}/>
                         ))}
                     </div>
                 )}
@@ -99,7 +136,7 @@ export default function AddOrderItem({id}: { id: string }) {
                 )}
             </div>
             <div className="lg:w-1/3">
-                <CardSection order={order}/>
+                <CardSection order={order} carts={carts} setCarts={setCarts} onAddToCarts={handleAddToCart}/>
             </div>
         </div>
     )

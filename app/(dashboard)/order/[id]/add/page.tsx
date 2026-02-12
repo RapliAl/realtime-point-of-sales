@@ -1,4 +1,4 @@
-import AddOrderItem from "@/app/(dashboard)/order/[id]/add/_components/add-order-item";
+import {AddOrderItem} from "@/app/(dashboard)/order/[id]/add/_components/add-order-item";
 
 export const metadata = {
     title: "Kedai Kita | Menu Management",
