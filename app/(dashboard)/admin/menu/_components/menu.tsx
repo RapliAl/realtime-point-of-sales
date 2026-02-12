@@ -30,6 +30,7 @@ export default function MenuManagement() {
         handleChangeLimit,
         handleChangeSearch
     } = useDataTable()
+
     const {data: menus, isLoading, refetch} = useQuery({
         queryKey: ["menus", currentPage, currentLimit, currentSearch],
         queryFn: async () => {

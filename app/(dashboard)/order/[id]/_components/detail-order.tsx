@@ -105,7 +105,7 @@ export default function DetailOrder({id}: { id: string }) {
             <div>
                 <div className="flex items-center gap-4 justify-between w-full">
                     <h1 className="text-2xl font-bold"> DETAIL ORDER </h1>
-                    <Link href="">
+                    <Link href={`/order/${id}/add`}>
                         <Button> Add Order Item </Button>
                     </Link>
                 </div>
