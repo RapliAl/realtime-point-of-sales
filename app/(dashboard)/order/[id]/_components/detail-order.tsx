@@ -8,10 +8,14 @@ import {createClient} from "@/lib/supabase/client";
 import useDataTable from "@/hooks/use-data-table";
 import {useQuery} from "@tanstack/react-query";
 import {toast} from "sonner";
-import {useMemo} from "react";
+import {startTransition, useActionState, useEffect, useMemo} from "react";
 import {cn, convertIDR} from "@/lib/utils";
 import Image from "next/image";
 import Summary from "@/app/(dashboard)/order/[id]/_components/summary";
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
+import {EllipsisVertical} from "lucide-react";
+import {INITIAL_STATE_ACTION} from "@/constants/general-constant";
+import {updateStatusOrderItem} from "@/app/(dashboard)/order/action";
 
 export default function DetailOrder({id}: { id: string }) {
     const supabase = createClient();
@@ -40,7 +44,8 @@ export default function DetailOrder({id}: { id: string }) {
         enabled: !!id
     });
 
-    const {data: orderMenu, isLoading: isLoadingOrderMenu} = useQuery({
+
+    const {data: orderMenu, isLoading: isLoadingOrderMenu, refetch: refetchOrderMenu} = useQuery({
         queryKey: ["orders_menu", order?.id, currentPage, currentLimit],
         queryFn: async () => {
             const result = await supabase
@@ -58,6 +63,36 @@ export default function DetailOrder({id}: { id: string }) {
         },
         enabled: !!order?.id
     });
+
+    const [updateStatusOrderState, updateStatusOrderAction] = useActionState(
+        updateStatusOrderItem,
+        INITIAL_STATE_ACTION
+    );
+
+    const handleUpdateStatusOrder = async (data: { id: string, status: string }) => {
+        const formData = new FormData();
+        Object.entries(data).forEach(([Key, value]) => {
+            formData.append(Key, value)
+        });
+
+        startTransition(() => {
+            updateStatusOrderAction(formData)
+        });
+    };
+
+    useEffect(() => {
+        if (updateStatusOrderState?.status === "error") {
+            toast.error("Update Status Order Failed!", {
+                description: updateStatusOrderState.errors?._form?.[0]
+            });
+        }
+
+        if (updateStatusOrderState?.status === "success") {
+            toast.success("Status Order Updated Successfully");
+            refetchOrderMenu()
+        }
+
+    }, [updateStatusOrderState]);
 
     const filteredData = useMemo(() => {
         return (orderMenu?.data || []).map(((item, index) => {
@@ -86,11 +121,40 @@ export default function DetailOrder({id}: { id: string }) {
                              "bg-gray-600": item.status === "pending",
                              "bg-yellow-600": item.status === "process",
                              "bg-blue-600": item.status === "ready",
-                             "bg-green-600": item.status === "serve",
+                             "bg-green-600": item.status === "served",
                          })}>
                         {item.status}
                     </div>,
-                    '',
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                className={cn("data-[state=open]:bg-muted text-muted-foreground flex size-8", {hidden: item.status === "served"})}
+                                size="icon"
+                            >
+                                <EllipsisVertical/>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-40">
+                            {["pending", "process", "ready"].map((status, index) => {
+                                const nextStatus = ["process", "ready", "served"] [index];
+
+                                return (
+                                    item.status === status && (
+                                        <DropdownMenuItem
+                                            key={status}
+                                            className="capitalize"
+                                            onClick={() => handleUpdateStatusOrder({
+                                                id: item.id,
+                                                status: nextStatus
+                                            })}>
+                                            {nextStatus}
+                                        </DropdownMenuItem>
+                                    )
+                                )
+                            })}
+                        </DropdownMenuContent>
+                    </DropdownMenu>,
                 ]
             }
         ))
