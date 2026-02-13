@@ -4,6 +4,8 @@ import {createClient} from "@/lib/supabase/server";
 import {OrderFormState} from "@/types/order";
 import {orderSchema} from "@/validations/order-validation";
 import {FormState} from "@/types/general";
+import {Cart} from "@/types/order";
+import {redirect} from "next/navigation";
 
 export async function createOrder(prevState: OrderFormState, formData: FormData) {
     const validatedFields = orderSchema.safeParse({
@@ -91,4 +93,28 @@ export async function updateReservation(prevState: FormState, formData: FormData
     return {
         status: "success",
     }
+}
+
+export async function addOrderItem(
+    prevState: OrderFormState,
+    data: {
+        order_id: string,
+        items: Cart[]
+    }) {
+    const supabase = await createClient()
+
+    const payload = data.items.map(({total, menu, ...item}) => item);
+
+    const {error} = await supabase.from("orders_menus").insert(payload);
+    if (error) {
+        return {
+            status: "error",
+            errors: {
+                ...prevState,
+                _form: []
+            },
+        };
+    }
+
+    redirect(`/order/${data.order_id}`);
 }

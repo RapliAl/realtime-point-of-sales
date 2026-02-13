@@ -7,11 +7,12 @@ import {Cart} from "@/types/order";
 import Image from "next/image";
 import {convertIDR} from "@/lib/utils";
 import {Menu} from "@/types/menu";
-import {debounce} from "next/dist/server/utils";
 import useDebounce from "@/hooks/use-debounce";
 import {Button} from "@/components/ui/button";
+import {Loader2} from "lucide-react";
 
-export default function CartSection({order, carts, setCarts, onAddToCarts}: {
+export default function CartSection({order, carts, setCarts, onAddToCarts, id, isLoading, onOrder}: {
+    id: string
     order: {
         customer_name: string;
         tables: { name: string } [];
@@ -20,6 +21,9 @@ export default function CartSection({order, carts, setCarts, onAddToCarts}: {
     carts: Cart[];
     setCarts: React.Dispatch<React.SetStateAction<Cart[]>>;
     onAddToCarts: (item: Menu, type: "decrement" | "increment") => void;
+    isLoading: boolean;
+    onOrder: () => void;
+
 }) {
     const debounce = useDebounce();
     const handleAddNote = (id: string, notes: string) => {
@@ -102,9 +106,16 @@ export default function CartSection({order, carts, setCarts, onAddToCarts}: {
                     ) : (
                         <p className="text-sm"> No Item In Cart </p>
                     )}
+                    <form>
+                        <Button
+                            formAction={onOrder}
+                            className="w-full font-semibold bg-teal-500 hover:bg-teal-600 cursor-pointer text-white"
+                        >
+                            {isLoading ? <Loader2 className="animate-spin"/> : "Order"}
+                        </Button>
+                    </form>
                 </div>
             </CardContent>
-
         </Card>
     )
 }

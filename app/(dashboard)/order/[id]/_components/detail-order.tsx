@@ -106,10 +106,10 @@ export default function DetailOrder({id}: { id: string }) {
                 <div className="flex items-center gap-4 justify-between w-full">
                     <h1 className="text-2xl font-bold"> DETAIL ORDER </h1>
                     <Link href={`/order/${id}/add`}>
-                        <Button> Add Order Item </Button>
+                        <Button className="font-bold mr-4"> Add Order Item </Button>
                     </Link>
                 </div>
-                <div className="flex flex-col lg:flex-row w-full gap-4">
+                <div className="flex flex-col lg:flex-row w-full gap-4 mt-4">
                     <div className="lg:w-2/3">
                         <DataTable
                             header={HEADER_TABLE_DETAIL_ORDER}

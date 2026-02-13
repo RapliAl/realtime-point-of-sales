@@ -10,9 +10,13 @@ import {FILTER_MENU} from "@/constants/order-constants";
 import CardMenu from "@/app/(dashboard)/order/[id]/add/_components/card-menu";
 import LoadingCardMenu from "@/app/(dashboard)/order/[id]/add/_components/loading-card-menu";
 import CardSection from "@/app/(dashboard)/order/[id]/add/_components/cart";
-import {useState} from "react";
+import React, {useState} from "react";
 import {Cart} from "@/types/order";
 import {Menu} from "@/types/menu";
+import {startTransition, useActionState} from "react";
+import {addOrderItem} from "@/app/(dashboard)/order/action";
+import {INITIAL_STATE_ACTION} from "@/constants/general-constant";
+
 
 export function AddOrderItem({id}: { id: string }) {
     const supabase = createClient();
@@ -67,6 +71,23 @@ export function AddOrderItem({id}: { id: string }) {
 
     const [carts, setCarts] = useState<Cart[]>([]);
 
+    const [addOrderItemState, addOrderItemAction, isPendingAddOrderItem] = useActionState(addOrderItem, INITIAL_STATE_ACTION);
+
+    const handleOrder = async () => {
+        const data = {
+            order_id: id,
+            items: carts.map((item) => ({
+                order_id: order?.id ?? "",
+                ...item,
+                status: "pending"
+            })),
+        };
+
+        startTransition(() => {
+            addOrderItemAction(data)
+        })
+    }
+
     const handleAddToCart = (menu: Menu, action: "increment" | "decrement") => {
         const existingItem = carts.find((item) => item.menu_id === menu.id);
 
@@ -98,7 +119,6 @@ export function AddOrderItem({id}: { id: string }) {
             }])
         }
     }
-
 
     return (
         <div className="flex flex-col lg:flex-row gap-4 w-full">
@@ -136,7 +156,14 @@ export function AddOrderItem({id}: { id: string }) {
                 )}
             </div>
             <div className="lg:w-1/3">
-                <CardSection order={order} carts={carts} setCarts={setCarts} onAddToCarts={handleAddToCart}/>
+                <CardSection
+                    order={order}
+                    carts={carts}
+                    setCarts={setCarts}
+                    onAddToCarts={handleAddToCart}
+                    isLoading={isPendingAddOrderItem}
+                    onOrder={handleOrder}
+                />
             </div>
         </div>
     )
