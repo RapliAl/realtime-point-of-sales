@@ -7,6 +7,12 @@ export const metadata = {
     description: "Detail Order Management Page"
 }
 
+declare global {
+    interface Window {
+        snap: any;
+    }
+}
+
 export default async function DetailOrderPage({params}: { params: Promise<{ id: string }> }) {
     const {id} = await params;
     return (

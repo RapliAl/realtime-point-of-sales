@@ -38,7 +38,7 @@ export default function OrderManagement() {
             const query = supabase
                 .from("orders")
                 .select(`
-                    id, order_id, customer_name, status, payment_url, tables (name, id)
+                    id, order_id, customer_name, status, payment_token, tables (name, id)
                 `, {count: "exact"})
                 .range((currentPage - 1) * currentLimit, currentPage * currentLimit - 1)
                 .order("created_at");
