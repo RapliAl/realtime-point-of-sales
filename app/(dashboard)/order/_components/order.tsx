@@ -17,8 +17,9 @@ import Order = Property.Order;
 import DialogCreateOrder from "@/app/(dashboard)/order/_components/dialog-create-order";
 import {updateReservation} from "@/app/(dashboard)/order/action";
 import {INITIAL_STATE_ACTION} from "@/constants/general-constant";
-import {Ban, Link2Icon, ScrollText} from "lucide-react";
+import {Ban, Link2Icon, ScrollText, Search} from "lucide-react";
 import Link from "next/link";
+import {useAuthStore} from "@/stores/auth-stores";
 
 
 export default function OrderManagement() {
@@ -58,6 +59,8 @@ export default function OrderManagement() {
             return result;
         }
     });
+
+    const profile = useAuthStore((state) => state.profile)
 
     const {data: tables, refetch: refetchTables} = useQuery({
         queryKey: ["tables"],
@@ -171,7 +174,7 @@ export default function OrderManagement() {
                     <DropdownAction
                         key={order.id}
                         menu={
-                            order.status === "reserved" ? reservedActionList.map((item) => ({
+                            order.status === "reserved" && profile.role !== "kitchen" ? reservedActionList.map((item) => ({
                                 label: item.label,
                                 action: () => item.action(order.id, (order.tables as unknown as { id: string }).id)
                             })) : [
@@ -196,22 +199,26 @@ export default function OrderManagement() {
         <div className="w-full">
             <div className="flex flex-col lg:flex-row mb-4 gap-2 justify-between w-full">
                 <h1 className="text-2xl font-bold"> ORDER MANAGEMENT </h1>
-                <div className="flex gap-2">
+                <div className="flex gap-2 w-55">
                     <Input
                         placeholder="Search By Name or Category"
                         onChange={(e) => handleChangeSearch(e.target.value)}
                     />
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button variant="outline">
-                                Create
-                            </Button>
-                        </DialogTrigger>
-                        <DialogCreateOrder
-                            refetch={refetch}
-                            tables={tables}
-                        />
-                    </Dialog>
+                    {
+                        profile.role !== "kitchen" && (
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Button variant="outline">
+                                        Create
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogCreateOrder
+                                    refetch={refetch}
+                                    tables={tables}
+                                />
+                            </Dialog>
+                        )
+                    }
                 </div>
             </div>
             <DataTable

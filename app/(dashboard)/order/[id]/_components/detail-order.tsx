@@ -16,6 +16,7 @@ import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
 import {EllipsisVertical} from "lucide-react";
 import {INITIAL_STATE_ACTION} from "@/constants/general-constant";
 import {updateStatusOrderItem} from "@/app/(dashboard)/order/action";
+import {useAuthStore} from "@/stores/auth-stores";
 
 export default function DetailOrder({id}: { id: string }) {
     const supabase = createClient();
@@ -79,6 +80,8 @@ export default function DetailOrder({id}: { id: string }) {
             updateStatusOrderAction(formData)
         });
     };
+
+    const profile = useAuthStore((state) => state.profile)
 
     useEffect(() => {
         if (updateStatusOrderState?.status === "error") {
@@ -169,9 +172,13 @@ export default function DetailOrder({id}: { id: string }) {
             <div>
                 <div className="flex items-center gap-4 justify-between w-full">
                     <h1 className="text-2xl font-bold"> DETAIL ORDER </h1>
-                    <Link href={`/order/${id}/add`}>
-                        <Button className="font-bold mr-4"> Add Order Item </Button>
-                    </Link>
+                    {
+                        profile.role !== "kitchen" && (
+                            <Link href={`/order/${id}/add`}>
+                                <Button className="font-bold mr-4"> Add Order Item </Button>
+                            </Link>
+                        )
+                    }
                 </div>
                 <div className="flex flex-col lg:flex-row w-full gap-4 mt-4">
                     <div className="lg:w-2/3">

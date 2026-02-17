@@ -11,6 +11,7 @@ import {INITIAL_STATE_GENERATE_PAYMENT} from "@/constants/order-constants";
 import {toast} from "sonner";
 import {Button} from "@/components/ui/button";
 import {Loader2} from "lucide-react";
+import {useAuthStore} from "@/stores/auth-stores";
 
 export default function Summary({order, orderMenu, id}: {
     order: {
@@ -43,6 +44,8 @@ export default function Summary({order, orderMenu, id}: {
             generatePaymentAction(formData);
         })
     }
+
+    const profile = useAuthStore((state) => state.profile)
 
     useEffect(() => {
         if (generatePaymentState?.status === "error") {
@@ -102,7 +105,7 @@ export default function Summary({order, orderMenu, id}: {
                         <p className="text-lg font-semibold">Total</p>
                         <p className="text-slg font-semibold">{convertIDR(grandTotal)}</p>
                     </div>
-                    {order.status === "process" && (
+                    {order.status === "process" && profile.role !== "kitchen" && (
                         <Button
                             className="w-full bg-teal-500 hover:bg-teal-600 text-white cursor-pointer font-semibold"
                             type="submit"
