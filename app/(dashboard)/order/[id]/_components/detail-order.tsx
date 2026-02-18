@@ -4,7 +4,7 @@ import {Button} from "@/components/ui/button";
 import DataTable from "@/components/common/data-table";
 import {HEADER_TABLE_DETAIL_ORDER} from "@/constants/order-constants";
 import Link from "next/link";
-import {createClient} from "@/lib/supabase/client";
+import {createClientSupabase} from "@/lib/supabase/default";
 import useDataTable from "@/hooks/use-data-table";
 import {useQuery} from "@tanstack/react-query";
 import {toast} from "sonner";
@@ -19,7 +19,7 @@ import {updateStatusOrderItem} from "@/app/(dashboard)/order/action";
 import {useAuthStore} from "@/stores/auth-stores";
 
 export default function DetailOrder({id}: { id: string }) {
-    const supabase = createClient();
+    const supabase = createClientSupabase();
     const {
         currentPage,
         currentLimit,
@@ -44,6 +44,26 @@ export default function DetailOrder({id}: { id: string }) {
         },
         enabled: !!id
     });
+
+    useEffect(() => {
+        if (!order?.id) return;
+
+        const channel = supabase
+            .channel("change-order")
+            .on("postgres_changes", {
+                event: "*",
+                schema: "public",
+                table: "orders_menus",
+                filter: `order_id = eq.${order.id}`
+            }, () => {
+                refetchOrderMenu();
+            })
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        }
+    }, [order?.id]);
 
 
     const {data: orderMenu, isLoading: isLoadingOrderMenu, refetch: refetchOrderMenu} = useQuery({
@@ -92,7 +112,6 @@ export default function DetailOrder({id}: { id: string }) {
 
         if (updateStatusOrderState?.status === "success") {
             toast.success("Status Order Updated Successfully");
-            refetchOrderMenu()
         }
 
     }, [updateStatusOrderState]);
