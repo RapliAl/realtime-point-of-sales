@@ -44,6 +44,9 @@ export async function createTable(prevState: TableFormState, formData: FormData)
 
     return {
         status: "success",
+        errors: {
+            _form: [],
+        }
     }
 }
 
@@ -89,6 +92,9 @@ export async function updateTable(prevState: TableFormState, formData: FormData)
 
     return {
         status: "success",
+        errors: {
+            _form: [],
+        }
     }
 }
 
@@ -112,6 +118,9 @@ export async function deleteTable(prevState: TableFormState, formData: FormData)
 
     return {
         status: "success",
+        errors: {
+            _form: [],
+        }
     }
 }
 

@@ -8,7 +8,7 @@ export function usePricing(orderMenu: {
     const totalPrice = useMemo(() => {
         let total = 0;
         orderMenu?.forEach((item) => {
-            total += item.menus.price * item.quantity;
+            total += parseFloat(item.menus.price ?? "") * item.quantity;
         });
 
         return total;

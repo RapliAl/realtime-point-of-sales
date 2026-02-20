@@ -1,4 +1,4 @@
-import {Menu} from "@/validations/validation-menu";
+import {Menu} from "@/types/menu";
 
 export type OrderFormState = {
     status?: string;

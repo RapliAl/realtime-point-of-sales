@@ -203,6 +203,9 @@ export async function deleteMenu(prevState: MenuFormState, formData: FormData) {
 
     return {
         status: "success",
+        errors: {
+            _form: []
+        }
     }
 }
 

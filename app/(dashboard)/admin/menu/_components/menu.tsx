@@ -12,7 +12,7 @@ import DropdownAction from "@/components/common/dropwdown-action";
 import {Pencil, Trash2} from "lucide-react";
 import useDataTable from "@/hooks/use-data-table";
 import {Profile} from "@/types/auth";
-import {Menu} from "@/validations/validation-menu";
+import {Menu} from "@/types/menu";
 import {cn, convertIDR} from "@/lib/utils";
 import Image from "next/image"
 import DialogCreateMenu from "@/app/(dashboard)/admin/menu/_components/dialog-create-menu";
@@ -70,7 +70,7 @@ export default function MenuManagement() {
                     <div key={`name-${menu.id}`} className="flex items-center gap-2">
                         <Image
                             src={menu.image_url as string}
-                            alt={menu.name}
+                            alt={menu.name as string}
                             width={40}
                             height={40}
                             className="rounded"
@@ -79,11 +79,11 @@ export default function MenuManagement() {
                     </div>,
                     menu.category,
                     <div key={`price-${menu.price}`}>
-                        <p>Based: {convertIDR(menu.price)}</p>
+                        <p>Based: {convertIDR(menu.price ?? "0")}</p>
                         <p>Discount: {menu.discount}</p>
                         <p>
                             After Discount:{" "}
-                            {convertIDR(menu.price - (menu.price * menu.discount) / 100)}
+                            {convertIDR(parseFloat(menu.price ?? "0") - (parseFloat(menu.price ?? "0") * parseFloat(menu.discount ?? "0")) / 100)}
                         </p>
                     </div>,
                     <div key={`isAvailable-${menu.is_available}`} className={cn(

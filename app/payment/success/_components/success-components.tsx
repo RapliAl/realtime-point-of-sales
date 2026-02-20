@@ -21,7 +21,8 @@ export default function Success() {
                     status: "settled"
                 })
                 .eq("order_id", order_id)
-                .select();
+                .select()
+                .single();
 
             if (data) {
                 await supabase
@@ -30,6 +31,7 @@ export default function Success() {
                         status: "available"
                     })
                     .eq("id", data.table_id)
+
             }
         }
     })

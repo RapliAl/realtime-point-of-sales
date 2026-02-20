@@ -7,7 +7,7 @@ import {ShoppingCart} from "lucide-react";
 
 export default function CardMenu({menu, onAddToCarts}: {
     menu: Menu,
-    onAddToCarts: (menu: Menu, action: "increment" | "decrement ") => void
+    onAddToCarts: (menu: Menu, action: "increment" | "decrement") => void
 }) {
     return (
         <Card key={menu.id} className="w-full h-fit border shadow-sm gap-0 p-0">

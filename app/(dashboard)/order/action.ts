@@ -60,6 +60,9 @@ export async function createOrder(prevState: OrderFormState, formData: FormData)
 
     return {
         status: "success",
+        errors: {
+            _form: [],
+        }
     }
 }
 
@@ -94,6 +97,9 @@ export async function updateReservation(prevState: FormState, formData: FormData
 
     return {
         status: "success",
+        errors: {
+            _form: [],
+        }
     }
 }
 
@@ -142,6 +148,9 @@ export async function updateStatusOrderItem(prevState: FormState, formData: Form
 
     return {
         status: "success",
+        errors: {
+            _form: [],
+        }
     }
 
 }
@@ -191,6 +200,9 @@ export async function generatePayment(prevState: FormState, formData: FormData) 
         status: "success",
         data: {
             payment_token: `${result.token}`
+        },
+        errors: {
+            _form: [],
         }
     }
 }

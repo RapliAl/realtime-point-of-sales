@@ -97,7 +97,7 @@ export function AddOrderItem({id}: { id: string }) {
                     setCarts(carts.map((item) => item.menu_id === menu.id ? {
                         ...item,
                         quantity: item.quantity - 1,
-                        total: item.total - menu.price
+                        total: item.total - parseFloat(menu.price ?? "0")
                     } : item))
                 } else {
                     setCarts(carts.filter((item) => item.menu_id !== menu.id))
@@ -106,16 +106,16 @@ export function AddOrderItem({id}: { id: string }) {
                 setCarts(carts.map((item) => item.menu_id === menu.id ? {
                     ...item,
                     quantity: item.quantity + 1,
-                    total: item.total + menu.price
+                    total: item.total + parseFloat(menu.price ?? "0")
                 } : item))
             }
         } else {
             setCarts([...carts, {
-                menu_id: menu.id,
+                menu_id: menu.id ?? "",
                 quantity: 1,
-                total: menu.price,
+                total: parseFloat(menu.price ?? "0"),
                 notes: "",
-                menu
+                menu: menu
             }])
         }
     }
@@ -157,6 +157,7 @@ export function AddOrderItem({id}: { id: string }) {
             </div>
             <div className="lg:w-1/3">
                 <CardSection
+                    id={id}
                     order={order}
                     carts={carts}
                     setCarts={setCarts}

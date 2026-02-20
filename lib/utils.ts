@@ -1,7 +1,6 @@
 import {clsx, type ClassValue} from "clsx"
 import {twMerge} from "tailwind-merge"
 import {ChangeEvent} from "react";
-import {forEach} from "eslint-config-next";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
@@ -18,10 +17,11 @@ export function getImageData(event: ChangeEvent<HTMLInputElement>) {
     return {file, displayUrl};
 }
 
-export function convertIDR(number: number) {
+export function convertIDR(number: number | string | undefined) {
+    const numValue = typeof number === "string" ? parseFloat(number) : (number ?? 0);
     return new Intl.NumberFormat("id-ID", {
         style: "currency",
         currency: "IDR",
         minimumFractionDigits: 0,
-    }).format(number);
+    }).format(numValue);
 }  

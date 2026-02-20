@@ -4,8 +4,8 @@ export type MenuFormState = {
         id?: string[];
         name?: string[];
         description?: string[];
-        price?: number[];
-        discount?: number[];
+        price?: string[];
+        discount?: string[];
         category?: string[];
         is_available?: string[];
         image_url?: string[];

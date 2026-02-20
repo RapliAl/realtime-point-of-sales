@@ -62,7 +62,7 @@ export default function CartSection({order, carts, setCarts, onAddToCarts, id, i
                                     <div className="flex items-center gap-2">
                                         <Image
                                             src={item.menu.image_url as string}
-                                            alt={item.menu.name}
+                                            alt={item.menu.name ?? ""}
                                             width={30}
                                             height={30}
                                             className="rounded"
@@ -78,7 +78,7 @@ export default function CartSection({order, carts, setCarts, onAddToCarts, id, i
                                     <Input
                                         placeholder="Add a note"
                                         className="w-full"
-                                        onChange={(e) => debounce(() => handleAddNote(item.menu!.id, e.target.value),
+                                        onChange={(e) => debounce(() => handleAddNote(item.menu!.id ?? "", e.target.value),
                                             500
                                         )}
                                     />

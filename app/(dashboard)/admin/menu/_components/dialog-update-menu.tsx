@@ -70,10 +70,10 @@ export default function DialogUpdateMenu(
         if (currentData) {
             form.setValue("name", currentData.name as string)
             form.setValue("description", currentData.description as string)
-            form.setValue("price", currentData.price.toString())
-            form.setValue("discount", currentData.discount.toString())
+            form.setValue("price", currentData.price?.toString() ?? "")
+            form.setValue("discount", currentData.discount?.toString() ?? "")
             form.setValue("category", currentData.category as string)
-            form.setValue("is_available", currentData.is_available.toString())
+            form.setValue("is_available", currentData.is_available?.toString() ?? "")
             form.setValue("image_url", currentData.image_url as string)
             setPreview({
                 file: new File([], currentData.image_url as string),

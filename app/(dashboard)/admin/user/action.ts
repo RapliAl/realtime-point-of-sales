@@ -71,7 +71,10 @@ export async function createUser(prevState: AuthFormState, formData: FormData) {
     }
 
     return {
-        status: "success"
+        status: "success",
+        errors: {
+            _form: [],
+        }
     }
 }
 
@@ -140,7 +143,10 @@ export async function updateUser(prevState: AuthFormState, formData: FormData) {
     }
 
     return {
-        status: "success"
+        status: "success",
+        errors: {
+            _form: [],
+        }
     }
 }
 
@@ -172,6 +178,9 @@ export async function deleteUser(prevState: AuthFormState, formData: FormData) {
     }
 
     return {
-        status: "success"
+        status: "success",
+        errors: {
+            _form: [],
+        }
     }
 }
