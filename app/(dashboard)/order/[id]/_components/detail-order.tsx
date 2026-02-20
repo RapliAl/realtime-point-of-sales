@@ -112,6 +112,7 @@ export default function DetailOrder({id}: { id: string }) {
 
         if (updateStatusOrderState?.status === "success") {
             toast.success("Status Order Updated Successfully");
+            refetchOrderMenu();
         }
 
     }, [updateStatusOrderState]);
